@@ -1,0 +1,22 @@
+{
+  "name": "distributedsystemsproject",
+  "version": "1.0.0",
+  "description": "Project for Distibuted Systems class spring 23 Prof Robert Bruce",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shaunakgalvankar/distributedSystemsProject.git"
+  },
+  "author": "shaunak galvankar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shaunakgalvankar/distributedSystemsProject/issues"
+  },
+  "homepage": "https://github.com/shaunakgalvankar/distributedSystemsProject#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
