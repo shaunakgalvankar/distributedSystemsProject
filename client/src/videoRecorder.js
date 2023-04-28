@@ -5,6 +5,7 @@ const VideoRecorder = () => {
   const [mediaStream, setMediaStream] = useState(null);
   const [recorder, setRecorder] = useState(null);
   const [recordedVideoUrl, setRecordedVideoUrl] = useState(null);
+  
 
   useEffect(() => {
     const getMediaStream = async () => {
