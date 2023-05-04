@@ -1,6 +1,19 @@
 var express = require('express');
 var router = express.Router();
 const path = require('path');
+const { Client } = require('pg');
+
+//establish docker credentials
+const client = new Client({
+  user: 'postgres',
+  host: 'localhost',
+  database: 'postgres',
+  password: 'silicon@30',
+  port: 5432,
+});
+
+
+
 
 //View Job
 router.get('/', function(req, res, next) {
@@ -8,8 +21,9 @@ router.get('/', function(req, res, next) {
 });
 
 //Put File
-router.get('/notexpress', function(req, res, next) {
-  res.render('index', { title: 'Not' });
+router.get('/saveToDB', function(req, res, next) {
+  client.connect();
+  
 });
 
 //Get File
