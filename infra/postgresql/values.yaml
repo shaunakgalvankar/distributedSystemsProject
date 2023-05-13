@@ -25,10 +25,10 @@ global:
     ## @param global.postgresql.auth.secretKeys.replicationPasswordKey Name of key in existing secret to use for PostgreSQL credentials (overrides `auth.secretKeys.replicationPasswordKey`). Only used when `global.postgresql.auth.existingSecret` is set.
     ##
     auth:
-      postgresPassword: ""
-      username: ""
-      password: ""
-      database: ""
+      postgresPassword: "123"
+      username: "stp"
+      password: "123"
+      database: "video"
       existingSecret: ""
       secretKeys:
         adminPasswordKey: ""
@@ -333,7 +333,30 @@ primary:
     ##      #!/bin/sh
     ##      echo "Do something."
     ##
-    scripts: {}
+    scripts: 
+      init.sql: | # <- Here
+          CREATE TABLE "users" (
+            "id" integer PRIMARY KEY,
+            "username" varchar
+          );
+          CREATE TABLE "videos" (
+            "id" integer PRIMARY KEY,
+            "user_id" integer,
+            "frame_rate" integer
+          );
+          CREATE TABLE "videoFiles" (
+            "id" integer PRIMARY KEY,
+            "video_id" integer,
+            "user_id" integer
+          );
+        
+          ALTER TABLE "videoFiles"
+          ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+          ALTER TABLE "videoFiles"
+          ADD FOREIGN KEY ("video_id") REFERENCES "videos" ("id");
+          ALTER TABLE "videos"
+          ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+
     ## @param primary.initdb.scriptsConfigMap ConfigMap with scripts to be run at first boot
     ## NOTE: This will override `primary.initdb.scripts`
     ##
