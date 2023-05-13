@@ -20,17 +20,17 @@ router.post('/', upload.single('video'), (req, res) => {
                 res.send({message: 'File upload successfully'});
             }
         });
-        // const videoData = req;
-        // console.log("Start saving file")
-        // console.log(videoData)
-        // // Process and save the video data on the server
-        // // For example, you could save the video data to a file using Node.js's built-in file system module (fs)
-        // fs.writeFile('video.mp4', videoData, (err) => {
-        //     if (err) throw err;
-        //     console.log('Video data saved to file');
-        // });
-        // // Send a response back to the client
-        // res.send('Video data received and saved')
+        const videoData = req;
+        console.log("Start saving file")
+        console.log(videoData)
+        // Process and save the video data on the server
+        // For example, you could save the video data to a file using Node.js's built-in file system module (fs)
+        fs.writeFile('video.mp4', videoData, (err) => {
+            if (err) throw err;
+            console.log('Video data saved to file');
+        });
+        // Send a response back to the client
+        res.send('Video data received and saved')
     } catch (err) {
         console.log(err)
     }
