@@ -1,6 +1,11 @@
 var express = require('express');
 var router = express.Router();
 const path = require('path');
+const ffmpegStatic = require('ffmpeg-static');
+const ffmpeg = require('fluent-ffmpeg');
+
+// Tell fluent-ffmpeg where it can find FFmpeg
+ffmpeg.setFfmpegPath(ffmpegStatic);
 
 //View Job
 router.get('/', function(req, res, next) {
