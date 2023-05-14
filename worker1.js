@@ -6,7 +6,7 @@ const subscriber = zmq.socket('pull');
 
 // Connect the socket to the publisher
 const port = process.argv[2] || 6000;
-const address = `tcp://127.0.0.1:${port}`;
+const address = `tcp://172.20.10.2:${port}`;
 subscriber.connect(address);
 console.log(`Subscriber connected to ${address}`);
 
