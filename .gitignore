@@ -3,4 +3,4 @@ node_modules
 .DS_Store
 video/
 jpegdump/
-worker_node/images/
+images/
