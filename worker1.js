@@ -5,7 +5,7 @@ const fs = require('fs');
 const subscriber = zmq.socket('pull');
 
 // Connect the socket to the publisher
-const port = process.argv[2] || 6000;
+const port = process.argv[2] || 5999;
 const address = `tcp://172.20.10.2:${port}`;
 subscriber.connect(address);
 console.log(`Subscriber connected to ${address}`);
@@ -22,3 +22,4 @@ subscriber.on('message', data => {
   const imageData = JSON.parse(data.toString());
   processImage(imageData);
 });
+

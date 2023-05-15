@@ -13,16 +13,17 @@ console.log(`Publisher bound to ${address}`);
 // Define function to read image files from directory
 function readImagesFromDirectory(directory) {
   const files = fs.readdirSync(directory);
-  const images = files.filter(file => file.endsWith('.jpg'));
+  const images = files.filter(file => file.endsWith('.jpeg'));
   return images.map(image => {
     const path = `${directory}/${image}`;
     const data = fs.readFileSync(path);
-    return { path, data };
+    return data;
   });
 }
 
 // Send images from directory
 const images = readImagesFromDirectory('jpegdump');
+// console.log(images)
 images.forEach(image => {
-  publisher.send(JSON.stringify(image));
+  publisher.send(image);
 });
