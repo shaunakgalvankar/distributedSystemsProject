@@ -25,6 +25,6 @@
     "react-icons": "^4.8.0",
     "react-webcam": "^7.0.1",
     "socket.io": "^4.6.1",
-    "zeromq": "^5.3.1"
+    "zeromq": "^6.0.0-beta.16"
   }
 }

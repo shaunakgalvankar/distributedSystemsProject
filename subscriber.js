@@ -1,13 +1,16 @@
-const zmq = require('zeromq');
+const fs = require('fs')
+const zmq = require("zeromq")
 
-// Create a ZeroMQ pull socket
-const receiver = zmq.socket('pull');
+async function run() {
+  const sock = new zmq.Pull
 
-// Bind the socket to a TCP address and port
-receiver.connect("tcp://127.0.0.1:6000")
-console.log("listenning")
-// Listen for incoming messages
-receiver.on('data', function(msg) {
-  // Process the message
-  console.log('Received message:');
-});
+  sock.connect("tcp://127.0.0.1:5999")
+  console.log("Worker connected to port 5999")
+
+  for await (const [msg] of sock) {
+    fs.writeFileSync("Image.jpeg", msg)
+    console.log("work: %s", "recieved")
+  }
+}
+
+run()
