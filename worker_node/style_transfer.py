@@ -8,6 +8,7 @@ from PIL import Image
 import zmq
 import io
 
+
 class StyleTransfer:
 
     def __init__(self):
@@ -23,7 +24,8 @@ class StyleTransfer:
             self.style_image, ksize=[3, 3], strides=[1, 1], padding='VALID')
 
     def load_image(self, image_data, image_size=(1024, 512)):
-        img = tf.image.decode_image(image_data, channels=3, dtype=tf.float32)[tf.newaxis, ...]
+        img = tf.image.decode_image(image_data, channels=3, dtype=tf.float32)[
+            tf.newaxis, ...]
         img = tf.image.resize(img, image_size, preserve_aspect_ratio=True)
         return img
 
@@ -61,7 +63,8 @@ class StyleTransfer:
         # original_image = self.load_image(source_img)
         # visualize([original_image, style_image], ['Original Image', 'Style Image'])
         original_image = self.load_image(source_img_data)
-        results = self.stylize_model(tf.constant(original_image), tf.constant(self.style_image))
+        results = self.stylize_model(tf.constant(
+            original_image), tf.constant(self.style_image))
         stylized_img = results[0]
         # self.export_image(stylized_photo).save()
         # self.visualize([original_image, self.style_image, stylized_img], titles=[
