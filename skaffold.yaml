@@ -1,0 +1,30 @@
+apiVersion: skaffold/v4beta5
+kind: Config
+metadata:
+  name: distributedsystemsproject
+build:
+  artifacts:
+    - image: stephenwyf1/auth-317
+      context: auth-service
+      sync:
+        manual:
+          - src: src/**/*.ts
+            dest: .
+      docker:
+        dockerfile: Dockerfile
+  local:
+    push: false
+
+manifests:
+  rawYaml:
+    - ./infra/auth/*
+
+deploy:
+  helm:
+    releases:
+      - name: postgresql
+        chartPath: infra/postgresql
+        valuesFiles:
+          - infra/postgresql/values.yaml
+        version: 12.2.1
+  kubectl: {}
