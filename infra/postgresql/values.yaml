@@ -336,18 +336,19 @@ primary:
     scripts: 
       init.sql: | # <- Here
           CREATE TABLE "users" (
-            "id" integer PRIMARY KEY,
-            "username" varchar
+            "id" UUID PRIMARY KEY,
+            "user_email" varchar,
+            "password" varchar
           );
           CREATE TABLE "videos" (
-            "id" integer PRIMARY KEY,
-            "user_id" integer,
+            "id" UUID PRIMARY KEY,
+            "user_id" UUID,
             "frame_rate" integer
           );
           CREATE TABLE "videoFiles" (
-            "id" integer PRIMARY KEY,
-            "video_id" integer,
-            "user_id" integer
+            "id" UUID PRIMARY KEY,
+            "video_id" UUID,
+            "user_id" UUID
           );
         
           ALTER TABLE "videoFiles"

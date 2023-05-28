@@ -3,6 +3,7 @@ var router = express.Router();
 const path = require('path');
 const ffmpegStatic = require('ffmpeg-static');
 const ffmpeg = require('fluent-ffmpeg');
+const { exec } = require('child_process');
 
 // Tell fluent-ffmpeg where it can find FFmpeg
 ffmpeg.setFfmpegPath(ffmpegStatic);
@@ -27,7 +28,21 @@ router.get('/getFile', function(req, res, next) {
 
 //Get Video Metadata for File
 router.get('/getVideoMetadata', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+  const filePath = './video/basketballcopy.MOV'; // Replace with the actual path to your video file
+
+  // Run ffprobe command to get video metadata
+  const command = `ffprobe  -v quiet -print_format json -show_format ${filePath}`;
+  exec(command, (error, stdout, stderr) => {
+    
+
+    const metadata = JSON.parse(stdout);
+
+    console.log(stderr)
+    console.log(metadata); // Print metadata to the console
+
+    res.render('index', { title: 'Express' });
+  });
+
 });
 
 //Extract Video Images with FrameRate 
