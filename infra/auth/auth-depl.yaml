@@ -14,12 +14,13 @@ spec:
     spec:
       containers:
         - name: auth
-          image: stephenwyf1/auth
+          image: stephenwyf1/auth-317
           env:
             - name: PostgreSQL_URI
-              value: "postgres-postgresql.default.svc.cluster.local:5432"
+              value: "postgresql.default.svc.cluster.local"
             - name: JWT_SECRET
               value: "wyf"
+
 ---
 apiVersion: v1
 kind: Service

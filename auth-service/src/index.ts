@@ -4,8 +4,9 @@ import {app} from "./app";
 
 const start = async () => {
     console.log('Starting Up')
-    // if(!process.env.JWT_SECRET)
-    //     throw new Error('Secret doesn\'t exist');
+    if(!process.env.JWT_SECRET) {
+        throw new Error('Secret doesn\'t exist');
+    }
     try{
         await client.connect();
         console.log('Connected to Postgres');

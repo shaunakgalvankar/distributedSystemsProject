@@ -32,7 +32,6 @@ router.post('/api/users/signup',
         const user = {
             id: id,
             user_email: email,
-            password: hashed
         }
         const value = [id, email, hashed];
         await client.query(insertQuery, value);

@@ -29,10 +29,11 @@ router.post('/api/users/signin',
             password: string;
         }
         const result: QueryResult<myRow> = await client.query(`SELECT * FROM users WHERE user_email = '${email}'`);
-        if(!result){
+        if(result.rowCount === 0){
             throw new BadRequestError('User doesn\'t exist!');
         }
         const user = result.rows[0];
+        console.log(user)
         const isMatch = await PasswordUtils.compare(
             user.password,
             password
