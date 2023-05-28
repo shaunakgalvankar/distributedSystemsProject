@@ -47,14 +47,49 @@ router.get('/getVideoMetadata', function(req, res, next) {
 
 //Extract Video Images with FrameRate 
 router.get('/extractImagesWithFramerate', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+  const videoFilePath = './video/basketballcopy.MOV';
+  const outputFolderName = 'basketballcopy_frames';
+  const outputFolderPath = path.join(__dirname, '..', outputFolderName);
+
+  // Create the output folder if it doesn't exist
+  if (!fs.existsSync(outputFolderPath)) {
+    fs.mkdirSync(outputFolderPath);
+  }
+
+  // Extract frames from the video using ffmpeg
+  ffmpeg(videoFilePath)
+    .output(path.join(outputFolderPath, 'frame-%d.png'))
+    .on('end', function() {
+      console.log('Frames extracted successfully.');
+      res.render('index', { title: 'Express' });
+    })
+    .on('error', function(err) {
+      console.error('Error extracting frames:', err);
+      res.status(500).send('Error extracting frames');
+    })
+    .run();
+    res.render('index', { title: 'Express' });
 });
+    
+
 
 //Create video from images with framerate
-router.get('/createVideoFromImages', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
+router.get('/createVideoFromImages', async function(req, res, next) {
+  const framesFolderPath = path.join(__dirname, '..', 'basketballcopy_frames');
+  const outputVideoPath = path.join(__dirname, '..', 'basketballcopy_converted.mp4');
 
+  // Execute the FFmpeg command to convert frames to a video
+  const ffmpegCommand = `ffmpeg  -i "${framesFolderPath}/frame-%d.png" -c:v libx264 -pix_fmt yuv420p "${outputVideoPath}"`;
+  await exec(ffmpegCommand, (error, stdout, stderr) => {
+    if (error) {
+      console.error('Error converting frames to video:', error);
+      res.status(500).send('Error converting frames to video');
+      return;
+    }
+    res.send('Frames converted to video successfully.');
+  });
+  
+});
 
 //Detect Face for File
 router.get('/detectFace', function(req, res, next) {
