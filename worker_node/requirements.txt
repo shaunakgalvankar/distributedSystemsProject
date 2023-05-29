@@ -1,0 +1,4 @@
+numpy <= 1.24.3
+pyzmq >= 23.2.0
+Pillow >= 8.0.0
+tensorflow_hub >= 0.13.0
