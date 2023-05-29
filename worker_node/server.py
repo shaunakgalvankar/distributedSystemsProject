@@ -34,14 +34,6 @@ class StyleTransfer:
         img = tf.image.resize(img, image_size, preserve_aspect_ratio=True)
         return img
 
-    def export_image(self, tf_img):
-        tf_img = tf_img * 255
-        tf_img = np.array(tf_img, dtype=np.uint8)
-        if np.ndim(tf_img) > 3:
-            assert tf_img.shape[0] == 1
-            img = tf_img[0]
-        return Image.fromarray(img)
-
     def process(self, source_img_data):
         original_image = self.load_image(source_img_data)
         results = self.stylize_model(tf.constant(
@@ -60,7 +52,8 @@ receiver.connect("tcp://127.0.0.1:6000")
 sender = context.socket(zmq.PUSH)
 Server_URI = os.environ.get("Server_URI")
 if Server_URI == None:
-    raise Exception('Server_URI not exist!')
+    print('Server_URI not exist!')
+    Server_URI = "tcp://server.default.svc.cluster.local:5999"
 print("Connecting to Server {Server_URI}")
 sender.connect(Server_URI)
 
