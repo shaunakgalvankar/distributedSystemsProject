@@ -4,3 +4,4 @@ node_modules
 video/
 jpegdump/
 worker_node/images/
+.vscode/
