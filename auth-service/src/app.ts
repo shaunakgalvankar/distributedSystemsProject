@@ -8,20 +8,25 @@ import {signInRouter} from "./route/signin";
 import {signUpRouter} from "./route/signup";
 import {signOutRouter} from "./route/signout";
 import {errorHandler,NotFoundError} from '@wyf-ticketing/wyf';
-
+const cors = require('cors');
+const corsOptions = {
+    origin: 'http://localhost:3000',
+    credentials:true,
+    optionSuccessStatus:200
+}
 const app = express();
 app.set('trust proxy', true); // ?
+app.use(cors(corsOptions));
 app.use(json());
 app.use(cookieSession({
     signed:false,
     secure:false
-    // 此处对cookie Session secure的设置将会影响浏览器是否保存cookie
-    // secure:process.env.NODE_ENV !== 'start',
 }))
 app.use(currentUserRouter);
 app.use(signInRouter);
 app.use(signOutRouter);
 app.use(signUpRouter);
+
 
 app.get('*',async (req,res)=>{
     throw new NotFoundError('Not Found Here!');

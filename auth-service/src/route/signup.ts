@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 const router = express.Router();
 
-router.post('/api/users/signup',
+router.post('/api/auth/signup',
     [
     body('email')
         .isEmail()
@@ -36,7 +36,7 @@ router.post('/api/users/signup',
         const value = [id, email, hashed];
         await client.query(insertQuery, value);
         // generate JWT
-        process.env.JWT_SECRET = "wda";
+
         const userJWT = jwt.sign({
            id: user.id,
            email: user.user_email
@@ -46,9 +46,9 @@ router.post('/api/users/signup',
         // a user was created, it should be valid in sign
         // in the process.
         // add JWT to Cookie field
-        req.session = {jwt:userJWT};
+        req.session = {jwt:userJWT}
 
-        res.status(201).send(user);
+        res.status(201).send({id : user.id, user_email: user.user_email});
         // console.log("Creating User.");
         // throw new Error("WTF!");
         // res.send({});

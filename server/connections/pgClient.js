@@ -1,4 +1,4 @@
-import { Client } from "pg";
+const Client = require ("pg");
 
 if(!process.env.PostgreSQL_URI){
     throw new Error("PostgreSQL URI must be defined");
@@ -6,7 +6,7 @@ if(!process.env.PostgreSQL_URI){
 
 console.log("Specify Postgres_URI:", process.env.PostgreSQL_URI);
 
-const client = new Client({
+const client = new Client.Client({
     user: "stp",
     host: process.env.PostgreSQL_URI,
     database: 'video',
@@ -14,4 +14,4 @@ const client = new Client({
     port: 5432
 })
 
-export default client;
+module.exports = client;

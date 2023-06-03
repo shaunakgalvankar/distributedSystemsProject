@@ -12,14 +12,6 @@ build:
             dest: .
       docker:
         dockerfile: Dockerfile
-    - image: stephenwyf1/worker
-      context: worker_node
-      sync:
-        manual:
-          - src: server.py
-            dest: .
-      docker:
-        dockerfile: Dockerfile  
     - image: stephenwyf1/server
       context: server
       sync:
@@ -27,7 +19,7 @@ build:
           - src: /**
             dest: .
       docker:
-        dockerfile: Dockerfile  
+        dockerfile: Dockerfile
   local:
     push: false
 

@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: server
+  name: server-depl
 spec:
   replicas: 1
   selector:
@@ -24,10 +24,10 @@ spec:
               value: "wyf"
           resources:
             limits:
-              memory: 512Mi
+              memory: 2048Mi
               cpu: "1"
             requests:
-              memory: 256Mi
+              memory: 1024Mi
               cpu: "0.2"
 ---
 apiVersion: v1

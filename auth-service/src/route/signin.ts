@@ -8,7 +8,7 @@ import jwt from "jsonwebtoken";
 
 const router = express.Router();
 
-router.post('/api/users/signin',
+router.post('/api/auth/signin',
     [
     body('email')
         .isEmail()
@@ -41,15 +41,14 @@ router.post('/api/users/signin',
         if(!isMatch){
             throw new BadRequestError('Wrong password, please try again.');
         }
-        process.env.JWT_SECRET = "wda";
         const userJWT = jwt.sign({
             id:user.id,
             email:user.user_email
         },process.env.JWT_SECRET!);
         // add JWT to Cookie field
-        req.session = {jwt:userJWT};
+        req.session = {jwt:userJWT}
         // maybe wrong here
-        res.send({id : user.id, user_email: user.user_email});
+        res.status(200).send({id : user.id, user_email: user.user_email});
     }
 );
 
