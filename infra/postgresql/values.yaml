@@ -343,6 +343,8 @@ primary:
           CREATE TABLE "videos" (
             "id" UUID PRIMARY KEY,
             "user_id" UUID,
+            "name" VARCHAR
+            "size" VARCHAR
             "frame_rate" integer
           );
           CREATE TABLE "videoFiles" (

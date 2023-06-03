@@ -9,9 +9,6 @@ const VideoRecorder = () => {
   const [videoData, setVideoData] = useState(null);
   // const [uploadStatus, setUploadStatus] = useState(null);
 
-  const api = axios.create({
-    baseURL: 'http://localhost:3000'
-  });
   useEffect(() => {
     const getMediaStream = async () => {
       try {
@@ -56,9 +53,17 @@ const VideoRecorder = () => {
     const formData = new FormData();
     formData.append('video', videoFile);
     try {
-      const res = await api.post('/video', formData, {
+      const currentUser = (await axios.get('api/auth/currentUser')).data;
+      const res = await axios.post('/api/user/video', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
+          'Content-Type': 'multipart/form-data',
+          'Current': JSON.stringify(currentUser)
+        }
+      });
+      await axios.get('/api/user/deleteAllFiles', {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Current': JSON.stringify(currentUser)
         }
       });
       console.log("Success!", res);
@@ -68,7 +73,22 @@ const VideoRecorder = () => {
       // setUploadStatus("error")
     }
   }
-  
+
+  async function login() {
+    const data = {
+      "email": "dwadfasdd@sca.com",
+      "password": "214dad3"
+    }
+    const str = JSON.stringify(data);
+    await axios.post("/api/auth/signup", str, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }, (res) => {
+      console.log(res);
+    })
+  }
+
   return (
     <div>
       <video ref={videoRef} autoPlay />
@@ -79,6 +99,7 @@ const VideoRecorder = () => {
           <h2>Recorded Video</h2>
           <video src={recordedVideoUrl} controls />
           <button onClick={saveVideoAsFile}>Save</button>
+          <button onClick={login}>login</button>
           {/*<button onClick={}>Cancel</button>*/}
         </div>
       )}
