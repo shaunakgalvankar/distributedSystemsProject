@@ -1,14 +1,14 @@
 const Client = require ("pg");
 
-if(!process.env.PostgreSQL_URI){
-    throw new Error("PostgreSQL URI must be defined");
-}
+// if(!process.env.PostgreSQL_URI){
+//     throw new Error("PostgreSQL URI must be defined");
+// }
 
-console.log("Specify Postgres_URI:", process.env.PostgreSQL_URI);
+// console.log("Specify Postgres_URI:", process.env.PostgreSQL_URI);
 
 const client = new Client.Client({
     user: "stp",
-    host: process.env.PostgreSQL_URI,
+    host: "localhost",
     database: 'video',
     password: '123',
     port: 5432
