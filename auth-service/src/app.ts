@@ -10,7 +10,7 @@ import {signOutRouter} from "./route/signout";
 import {errorHandler,NotFoundError} from '@wyf-ticketing/wyf';
 const cors = require('cors');
 const corsOptions = {
-    origin: 'http://localhost:3000',
+    origin: 'http://localhost:3001',
     credentials:true,
     optionSuccessStatus:200
 }
@@ -19,8 +19,9 @@ app.set('trust proxy', true); // ?
 app.use(cors(corsOptions));
 app.use(json());
 app.use(cookieSession({
-    signed:false,
-    secure:false
+    signed: false,
+    secure: false,
+    domain: 'localhost'
 }))
 app.use(currentUserRouter);
 app.use(signInRouter);

@@ -11,11 +11,11 @@ const {exec} = require("child_process");
 
 var router = express.Router();
 router.post('/api/user/video', upload.single('video'), async (req, res) => {
-    // if (!req.headers['current']) {
-    //     throw new NotAuthorizedError("Not Authorized");
-    // }
-    // const header = req.headers['current'];
-    // const currentUser = JSON.parse(header).currentUser;
+    if (!req.headers['current']) {
+        throw new NotAuthorizedError("Not Authorized");
+    }
+    const header = req.headers['current'];
+    const currentUser = JSON.parse(header);
     const {originalname, path} = req.file;
     const filePath = './userspace/' + originalname
     fs.renameSync(path, filePath);
@@ -28,7 +28,7 @@ router.post('/api/user/video', upload.single('video'), async (req, res) => {
         stats.frameRate = metadata.streams[1].r_frame_rate;
     });
     await client.query("INSERT INTO videos (id, user_id, name, size, frame_rate) VALUES ($1, $2, $3, $4, $5);",
-        [uuidv4(), 1, filePath, stats.size, stats.frameRate], (err) => {
+        [uuidv4(), currentUser.id, filePath, stats.size, stats.frameRate], (err) => {
         console.error(err)
     })
     console.log("Successfully uploaded, Meta data saved!");

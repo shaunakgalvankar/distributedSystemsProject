@@ -53,14 +53,14 @@ const VideoRecorder = () => {
     const formData = new FormData();
     formData.append('video', videoFile);
     try {
-      // const currentUser = (await axios.get('http://containers.prod/api/auth/currentUser')).data;
+      const currentUser_real = (await axios.get('http://containers.prod/api/auth/currentUser')).data;
+      const currentUser = {id : 1}
       const res = await axios.post('http://localhost:3000/api/user/video', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          // 'Current': JSON.stringify(currentUser)
+          'Current': JSON.stringify(currentUser)
         }
       });
-
       console.log("Success!", res);
       // setUploadStatus("success");
     } catch (err) {
@@ -70,18 +70,23 @@ const VideoRecorder = () => {
   }
 
   async function login() {
-    const data = {
-      "email": "dwadfasdd@sca.com",
-      "password": "214dad3"
-    }
-    const str = JSON.stringify(data);
-    await axios.post("http://containers.prod/api/auth/signin", str, {
-      headers: {
-        'Content-Type': 'application/json'
+    try {
+      const data = {
+        "email": "dwasffd@scu.com",
+        "password": "214dad3"
       }
-    }, (res) => {
-      console.log(res);
-    })
+      const str = JSON.stringify(data);
+      await axios.post("http://containers.prod/api/auth/signin", str, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }, (err,{res}) => {
+        if (err) console.log(err)
+        console.log(res);
+      })
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   return (

@@ -8,7 +8,7 @@ const Client = require ("pg");
 
 const client = new Client.Client({
     user: "stp",
-    host: "localhost",
+    host: "containers.prod",
     database: 'video',
     password: '123',
     port: 5432
