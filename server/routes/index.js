@@ -43,7 +43,7 @@ router.get('/api/user/getVideoMetaData', function(req, res, next) {
 
 //Extract Video Images with FrameRate 
 router.get('/api/user/extractImagesWithFramerate', function(req, res, next) {
-  const videoFilePath = './video/basketballcopy.MOV';
+  const videoFilePath = './video/IMG_0685.MOV';
   const outputFolderName = 'basketballcopy_frames';
   const outputFolderPath = path.join(__dirname, '..', outputFolderName);
   // Create the output folder if it doesn't exist

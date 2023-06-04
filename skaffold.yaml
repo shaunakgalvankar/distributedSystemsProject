@@ -12,14 +12,6 @@ build:
             dest: .
       docker:
         dockerfile: Dockerfile
-    - image: stephenwyf1/server
-      context: server
-      sync:
-        manual:
-          - src: /**
-            dest: .
-      docker:
-        dockerfile: Dockerfile
   local:
     push: false
 

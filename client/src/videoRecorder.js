@@ -53,19 +53,14 @@ const VideoRecorder = () => {
     const formData = new FormData();
     formData.append('video', videoFile);
     try {
-      const currentUser = (await axios.get('api/auth/currentUser')).data;
-      const res = await axios.post('/api/user/video', formData, {
+      // const currentUser = (await axios.get('http://containers.prod/api/auth/currentUser')).data;
+      const res = await axios.post('http://localhost:3000/api/user/video', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          'Current': JSON.stringify(currentUser)
+          // 'Current': JSON.stringify(currentUser)
         }
       });
-      await axios.get('/api/user/deleteAllFiles', {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Current': JSON.stringify(currentUser)
-        }
-      });
+
       console.log("Success!", res);
       // setUploadStatus("success");
     } catch (err) {
@@ -80,7 +75,7 @@ const VideoRecorder = () => {
       "password": "214dad3"
     }
     const str = JSON.stringify(data);
-    await axios.post("/api/auth/signup", str, {
+    await axios.post("http://containers.prod/api/auth/signin", str, {
       headers: {
         'Content-Type': 'application/json'
       }
