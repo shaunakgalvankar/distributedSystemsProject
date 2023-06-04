@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from "axios";
+import FileList, { fetchData } from './fileList';
+
+
 
 const VideoRecorder = () => {
   const videoRef = useRef(null);
@@ -7,6 +10,7 @@ const VideoRecorder = () => {
   const [recorder, setRecorder] = useState(null);
   const [recordedVideoUrl, setRecordedVideoUrl] = useState(null);
   const [videoData, setVideoData] = useState(null);
+
   // const [uploadStatus, setUploadStatus] = useState(null);
 
   useEffect(() => {
@@ -49,40 +53,44 @@ const VideoRecorder = () => {
   };
 
   const saveVideoAsFile = async () => {
-    const videoFile = new File([videoData], Date.now()+".webm", { type: "video/webm" });
+    const canvas = document.createElement('canvas');
+  const videoElement = videoRef.current;
+  canvas.width = videoElement.videoWidth;
+  canvas.height = videoElement.videoHeight;
+  canvas.getContext('2d').drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+  canvas.toBlob(async (blob) => {
+    const videoFile = new File([blob], Date.now() + '.mp4', { type: 'video/mp4' });
     const formData = new FormData();
     formData.append('video', videoFile);
     try {
-      // const currentUser = (await axios.get('http://containers.prod/api/auth/currentUser')).data;
-      const res = await axios.post('http://localhost:3000/api/user/video', formData, {
+      const res = await axios.post('http://localhost:3000/video', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          // 'Current': JSON.stringify(currentUser)
-        }
+        },
+
       });
-
-      console.log("Success!", res);
-      // setUploadStatus("success");
+      fetchData();
+      console.log('Success!', res);
     } catch (err) {
-      console.error('Error Uploading', err)
-      // setUploadStatus("error")
+      console.error('Error Uploading', err);
     }
+  }, 'video/mp4');
   }
 
-  async function login() {
-    const data = {
-      "email": "dwadfasdd@sca.com",
-      "password": "214dad3"
-    }
-    const str = JSON.stringify(data);
-    await axios.post("http://containers.prod/api/auth/signin", str, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }, (res) => {
-      console.log(res);
-    })
-  }
+  // async function login() {
+  //   const data = {
+  //     "email": "dwadfasdd@sca.com",
+  //     "password": "214dad3"
+  //   }
+  //   const str = JSON.stringify(data);
+  //   await axios.post("http://containers.prod/api/auth/signin", str, {
+  //     headers: {
+  //       'Content-Type': 'application/json'
+  //     }
+  //   }, (res) => {
+  //     console.log(res);
+  //   })
+  // }
 
   return (
     <div>
@@ -94,7 +102,7 @@ const VideoRecorder = () => {
           <h2>Recorded Video</h2>
           <video src={recordedVideoUrl} controls />
           <button onClick={saveVideoAsFile}>Save</button>
-          <button onClick={login}>login</button>
+          {/* <button onClick={login}>login</button> */}
           {/*<button onClick={}>Cancel</button>*/}
         </div>
       )}
