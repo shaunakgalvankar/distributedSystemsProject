@@ -53,7 +53,7 @@ const VideoRecorder = () => {
     const formData = new FormData();
     formData.append('video', videoFile);
     try {
-      const currentUser_real = (await axios.get('http://containers.prod/api/auth/currentUser')).data;
+      // const currentUser_real = (await axios.get('http://containers.prod/api/auth/currentUser')).data;
       const currentUser = {id : 1}
       const res = await axios.post('http://localhost:3000/api/user/video', formData, {
         headers: {
@@ -62,10 +62,8 @@ const VideoRecorder = () => {
         }
       });
       console.log("Success!", res);
-      // setUploadStatus("success");
     } catch (err) {
       console.error('Error Uploading', err)
-      // setUploadStatus("error")
     }
   }
 

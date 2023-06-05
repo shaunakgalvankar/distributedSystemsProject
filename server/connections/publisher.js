@@ -1,6 +1,10 @@
 const zmq = require('zeromq');
 const fs = require('fs');
 
+const publisher = new zmq.Push;
+const socket = "tcp://0.0.0.0:6000";
+publisher.bind(socket)
+
 function readImagesFromDirectory(directory) {
   const files = fs.readdirSync(directory);
   const images = files.filter(file => file.endsWith('.jpeg'));
@@ -12,16 +16,13 @@ function readImagesFromDirectory(directory) {
   });
 }
 
-async function init() {
+const Publish = async function (outputFolderPath){
   // Create ZeroMQ push socket
-  const publisher = new zmq.Push;
-  const socket = "tcp://0.0.0.0:6000";
-  await publisher.bind(socket)
   console.log("Producer bound to address", socket)
   // Define function to read image files from directory
   console.log('Start publishing')
   // Send images from directory
-  const images = readImagesFromDirectory('jpegdump');
+  const images = readImagesFromDirectory(outputFolderPath);
   // console.log(images)
   for (const {data, image} of images) {
     await publisher.send([image, data]);
@@ -29,6 +30,7 @@ async function init() {
   }
 }
 
-init();
+
+module.exports = Publish;
 
 
