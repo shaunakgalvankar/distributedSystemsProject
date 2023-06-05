@@ -1,18 +1,24 @@
 const fs = require('fs')
 const zmq = require("zeromq")
+const fsExtra = require("fs-extra")
+const createVideo = require("../Tools/createVideo");
 
-async function run() {
-  const sock = new zmq.Pull;
-  const socketAddr = "tcp://10.0.0.99:5999";
-  sock.connect(socketAddr);
+const socketAddr = "tcp://10.0.0.99:5999";
+const sock = new zmq.Pull;
+sock.connect(socketAddr);
+
+const listenToWorkerNode = async function (num, rawDirAddr, processedImageAddr, name) {  
   console.log("Image Reducer connected to", socketAddr);
-
-  for await (const msg of sock) {
-    const name = Buffer.from(msg[0]).toString('utf-8');
-    const dataBuffer = Buffer.from(msg[1]);
-    fs.writeFileSync(`processed_${name}`, dataBuffer);
+  for (let i = 0; i < num; i++) {
+    var [fileName, data] = await sock.receive()
+    const name = Buffer.from(fileName).toString('utf-8');
+    const dataBuffer = Buffer.from(data);
+    fs.writeFileSync(`${processedImageAddr}/${name}`, dataBuffer);
     console.log(name,"Processed and recieved.");
   }
+  fsExtra.removeSync(rawDirAddr);
+  console.log(rawDirAddr, "Deleted");
+  createVideo(processedImageAddr, name)
 }
 
-run()
+module.exports = listenToWorkerNode;

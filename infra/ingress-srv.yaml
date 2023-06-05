@@ -24,3 +24,10 @@ spec:
                 name: auth-srv
                 port:
                   number: 3000
+          - path: /postgresql
+            pathType: Prefix
+            backend:
+              service:
+                name: postgresql
+                port:
+                  number: 5432
