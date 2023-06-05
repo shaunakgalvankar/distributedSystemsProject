@@ -1,76 +1,81 @@
 import os
-import numpy as np
-import tensorflow as tf
-import tensorflow_hub as tf_hub
 from PIL import Image
 import zmq
 import io
-
-
-class StyleTransfer:
-
-    def __init__(self):
-        self.setStyle("style")
-        model_path = "tf_model"
-        self.stylize_model = tf_hub.load(model_path)
-        pass
-
-    def setStyle(self, style):
-        style_image_path = "images"+os.sep+style+".jpeg"
-        self.style_image = self.load_image_from_file(style_image_path)
-        self.style_image = tf.nn.avg_pool(
-            self.style_image, ksize=[3, 3], strides=[1, 1], padding='VALID')
-
-    def load_image(self, image_data, image_size=(1024, 512)):
-        img = tf.image.decode_image(image_data, channels=3, dtype=tf.float32)[
-            tf.newaxis, ...]
-        img = tf.image.resize(img, image_size, preserve_aspect_ratio=True)
-        return img
-
-    def load_image_from_file(self, image_path, image_size=(1024, 512)):
-        img = tf.io.decode_image(
-            tf.io.read_file(image_path),
-            channels=3, dtype=tf.float32)[tf.newaxis, ...]
-        img = tf.image.resize(img, image_size, preserve_aspect_ratio=True)
-        return img
-
-    def process(self, source_img_data):
-        original_image = self.load_image(source_img_data)
-        results = self.stylize_model(tf.constant(
-            original_image), tf.constant(self.style_image))
-        stylized_img = results[0]
-        return stylized_img
-
+import time
+import cv2
+import mediapipe as mp
+import numpy as np
 
 context = zmq.Context()
 
+
 # Socket to receive messages on
 receiver = context.socket(zmq.PULL)
-receiver.connect("tcp://127.0.0.1:6000")
+receiver.connect("tcp://10.0.0.200:6000")
 
 # Socket to send messages to
 sender = context.socket(zmq.PUSH)
-Server_URI = os.environ.get("Server_URI")
-if Server_URI == None:
-    print('Server_URI not exist!')
-    Server_URI = "tcp://server.default.svc.cluster.local:5999"
-print("Connecting to Server {Server_URI}")
-sender.connect(Server_URI)
-
-model = StyleTransfer()
+Server_URI = "tcp://0.0.0.0:5999"
+sender.bind(Server_URI)
+print("Connecting to Server")
 
 # Process tasks forever
 while True:
     # TODO Receive from the queue, save it to local cache (in memory), if no data come, freeze, otherwise process the data, and send image back to the queue.
     # Waiting for data
     print("Waiting for data")
-    img_buffer = receiver.recv()
-    pil_img = Image.open(io.BytesIO(img_buffer))
-    # Convert the image to JPEG format
-    with io.BytesIO() as output:
-        pil_img.save(output, format='JPEG')
-        jpeg_data = output.getvalue()
-    styled_img = model.process(jpeg_data)
-    print("Process complete")
+    message = []
+    while True:
+        part = receiver.recv()
+        message.append(part)
+        if not receiver.getsockopt(zmq.RCVMORE):
+            break
+
+    mp_drawing = mp.solutions.drawing_utils
+    mp_drawing_styles = mp.solutions.drawing_styles
+    mp_face_mesh = mp.solutions.face_mesh
+    drawing_spec = mp_drawing.DrawingSpec(thickness=1, circle_radius=1)
+    img_name = message[0]
+    print(img_name)
+    image_data = message[1]
+    start_time = time.time()
+    # Convert the received data into a NumPy array
+    image_array = np.frombuffer(image_data, np.uint8)
+
+    # Decode the array into an image
+    image = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+    with mp_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidence=0.5) as face_mesh:
+        # To improve performance
+        image.flags.writeable = False
+
+        # Detect the face landmarks
+        results = face_mesh.process(image)
+
+        # To improve performance
+        image.flags.writeable = True
+
+        # Convert back to the BGR color space
+        image_rgb = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+
+        # Draw the face mesh annotations on the image.
+        if results.multi_face_landmarks:
+            for face_landmarks in results.multi_face_landmarks:
+                mp_drawing.draw_landmarks(
+                    image=image_rgb,
+                    landmark_list=face_landmarks,
+                    connections=mp_face_mesh.FACEMESH_TESSELATION,
+                    landmark_drawing_spec=None,
+                    connection_drawing_spec=mp_drawing_styles.get_default_face_mesh_tesselation_style())
+
+    # Encode the image as a JPEG
+    retval, buffer = cv2.imencode('.jpeg', image_rgb)
+
+    # Convert the buffer to a byte array
+    img_buffer = buffer.tobytes()
+    end_time = time.time()
+    print("Process complete, used:"+str(end_time-start_time))
     # Send results to sink
-    sender.send(styled_img)
+    sender.send_multipart([img_name, img_buffer])
