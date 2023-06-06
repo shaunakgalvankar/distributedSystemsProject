@@ -35,9 +35,7 @@ router.get('/api/user/getFile', function(req, res, next) {
 });
 
 //Get Video Metadata for File
-router.get('/api/user/getVideoMetaData', function(req, res, next) {
-  const filePath = './video/1685751202767.webm'; // Replace with the actual path to your video file
-
+router.get('/api/user/getVideoMetaData/:video_id', function(req, res, next) {
   // Run ffprobe command to get video metadata
   const command = `ffprobe  -v quiet -print_format json -show_format -show_entries stream=r_frame_rate ${filePath}`;
   exec(command, (error, stdout, stderr) => {
