@@ -28,18 +28,23 @@ router.post('/api/user/video', upload.single('video'), async (req, res) => {
         stats.size = metadata.format.size
         stats.frameRate = metadata.streams[1].r_frame_rate;
     });
-    // await client.query("INSERT INTO videos (id, user_id, name, size, frame_rate) VALUES ($1, $2, $3, $4, $5);",
-    //     [uuidv4(), uuidv4(), filePath, stats.size, stats.frameRate], (err) => {
-    //     console.error(err)
-    // })
+    const video_id = uuidv4();
+    console.log("video id:", video_id);
+    currentUser.id = uuidv4();
+    await client.query("INSERT INTO videos (id, user_id, name, size, frame_rate) VALUES ($1, $2, $3, $4, $5);",
+        [video_id, currentUser.id, filePath, stats.size, stats.frameRate], (err) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+    })
     console.log("File:", filePath, "saved!")
     const rawImageAddr = `./images/${currentUser.id}`;
     const processedImageAddr = `./processed/${currentUser.id}`;
     fs.mkdirSync(rawImageAddr);
     fs.mkdirSync(processedImageAddr);
-    Extract(filePath, rawImageAddr, processedImageAddr);
-    console.log("Successfully uploaded, Meta data saved!");
-    res.status(200).send("Successfully uploaded, Meta data saved!");
+    Extract(filePath, rawImageAddr, processedImageAddr, video_id);
+    res.status(200).send({msg:"Successfully uploaded, Meta data saved!", video_id: video_id});
 });
 
 //Delete all Files
@@ -73,4 +78,35 @@ router.get('/api/user/deleteAllFiles', async  (req, res) => {
     res.status(200).send("All Deleted");
 });
 
+router.get('/api/user/proceeding/:video_id', (req, res) => {
+    const video_id = req.params.video_id;
+    const queryStr = `SELECT * FROM tasks WHERE video_id = $1 AND status=$2;`;
+    client.query(
+        queryStr,
+        [video_id, "Proceeding"],
+        (err, result) => {
+            if (err) {
+                console.error(err);
+                return;
+            }
+            res.status(200).send(result.rows);
+        }
+    );
+})
+
+router.get('/api/user/completed/:video_id', (req, res) => {
+    const video_id = req.params.video_id;
+    const queryStr = `SELECT * FROM tasks WHERE video_id = $1 AND status=$2;`;
+    client.query(
+        queryStr,
+        [video_id, "Completed"],
+        (err, result) => {
+            if (err) {
+                console.error(err);
+                return;
+            }
+            res.status(200).send(result.rows);
+        }
+    );
+})
 module.exports = router
