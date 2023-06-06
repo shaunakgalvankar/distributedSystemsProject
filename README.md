@@ -3,7 +3,8 @@
 ## prerequisite software
 
 1. kubectl
-2. helm
+2. skaffold
+3. helm
 4. docker desktop
 
 ## Get started
