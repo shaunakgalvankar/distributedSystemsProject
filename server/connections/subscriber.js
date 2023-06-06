@@ -28,7 +28,7 @@ const listenToWorkerNode = async function (num, rawDirAddr, processedImageAddr, 
         }
         const row = result.rows[0];
         // console.log(row);
-        const {video_id, task_name, time_started} = row;
+        const {video_id} = row;
         const timestamp = Date.now();
         const pgTimestamp = new Date(timestamp).toISOString();
         client.query("UPDATE tasks SET status=$1, time_finished=$2 WHERE video_id=$3;",
@@ -42,8 +42,10 @@ const listenToWorkerNode = async function (num, rawDirAddr, processedImageAddr, 
     });
     console.log(oldName,"Processed and recieved.");
   }
-  fsExtra.removeSync(rawDirAddr);
-  console.log(rawDirAddr, "Deleted");
+  if (fs.existsSync(rawDirAddr)) {
+    fsExtra.removeSync(rawDirAddr);
+    console.log(rawDirAddr, "Deleted");
+  }
   createVideo(processedImageAddr, name)
 }
 

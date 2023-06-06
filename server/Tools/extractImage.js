@@ -20,7 +20,7 @@ const Extract = function (videoFilePath, outputFolderPath, processedImageAddr, v
         const num = fs.readdirSync(outputFolderPath).length
         Publish(outputFolderPath, video_id);
         client.query(
-            "SELECT ip FROM nodes",
+            "SELECT ip, node_name FROM nodes",
             (err, result) => {
                 if (err) {
                     console.error(err);
@@ -34,11 +34,19 @@ const Extract = function (videoFilePath, outputFolderPath, processedImageAddr, v
                     return;
                 }
                 const load = num / result.rowCount;
-                result.rows.map((row) => {
-                    const {ip} = row;
-                    listenToWorkerNode(load, outputFolderPath, processedImageAddr, name, video_id, ip);
-                });
-                if (num % result.rowCount != 0) {
+                console.log("start working on ",result.rowCount,"machines");
+                if (num % result.rowCount == 0) {
+                    result.rows.map((row) => {
+                        const {ip, node_name} = row;
+                        console.log("worker:", node_name, "on:", ip, "start working!!");
+                        listenToWorkerNode(load, outputFolderPath, processedImageAddr, name, video_id, ip);
+                    });
+                } else {
+                    for (let i = 0; i < result.rowCount - 1; i++) {
+                        const {ip, node_name} = result.rows[i];
+                        console.log("worker:", node_name, "on:", ip, "start working!!");
+                        listenToWorkerNode(load, outputFolderPath, processedImageAddr, name, video_id, ip);
+                    }
                     listenToWorkerNode(num % result.rowCount, outputFolderPath, processedImageAddr, name, video_id, ip);
                 }
             }

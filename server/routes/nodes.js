@@ -3,7 +3,7 @@ var router = express.Router();
 const client = require('../connections/pgClient');
 const uuidv4 = require('uuid').v4;
 
-/* GET users listing. */
+/* GET nodes listing. */
 router.get('/api/user/nodes', function(req, res, next) {
   const queryStr = `SELECT * FROM nodes;`;
   client.query(
@@ -17,7 +17,7 @@ router.get('/api/user/nodes', function(req, res, next) {
       }
   );
 });
-/* GET users listing. */
+/* GET node listing. */
 router.get('/api/user/nodes/:node_name', function(req, res, next) {
   const queryStr = `SELECT * FROM nodes WHERE node_name=$1;`;
   client.query(
