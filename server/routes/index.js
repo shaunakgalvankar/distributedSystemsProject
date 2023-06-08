@@ -8,6 +8,9 @@ const fs = require('fs')
 // Tell fluent-ffmpeg where it can find FFmpeg
 ffmpeg.setFfmpegPath(ffmpegStatic);
 
+
+
+
 //View Job
 router.get('/api/user', function(req, res, next) {
   res.render('index', { title: 'Express' });
