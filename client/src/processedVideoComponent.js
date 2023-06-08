@@ -20,8 +20,8 @@ const ProcessedVideoComponent = () => {
   }, []);
 
   return (
-    <div>
-        <h2>Processed Video</h2>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
+      <h2>Processed Video</h2>
       {videoUrl ? (
         <video src={videoUrl} controls />
       ) : (

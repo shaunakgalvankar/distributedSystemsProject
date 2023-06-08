@@ -1,13 +1,43 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from "axios";
+import { Button, Grid, Typography, makeStyles } from '@material-ui/core';
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    paddingTop: theme.spacing(3),
+  },
+  videoContainer: {
+    width: '100%',
+    marginBottom: theme.spacing(2),
+  },
+  video: {
+    width: '100%',
+    height: 'auto',
+  },
+  buttonContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    marginBottom: theme.spacing(2),
+    '& > *': {
+      margin: theme.spacing(0.5),
+    },
+  },
+  roundedButton: {
+    borderRadius: theme.spacing(4),
+  },
+}));
+
 
 const VideoRecorder = () => {
+  const classes = useStyles();
   const videoRef = useRef(null);
   const [mediaStream, setMediaStream] = useState(null);
   const [recorder, setRecorder] = useState(null);
   const [recordedVideoUrl, setRecordedVideoUrl] = useState(null);
   const [videoData, setVideoData] = useState(null);
-  // const [uploadStatus, setUploadStatus] = useState(null);
 
   useEffect(() => {
     const getMediaStream = async () => {
@@ -49,12 +79,11 @@ const VideoRecorder = () => {
   };
 
   const saveVideoAsFile = async () => {
-    const videoFile = new File([videoData], Date.now()+".webm", { type: "video/webm" });
+    const videoFile = new File([videoData], Date.now() + ".webm", { type: "video/webm" });
     const formData = new FormData();
     formData.append('video', videoFile);
     try {
-      // const currentUser_real = (await axios.get('http://containers.prod/api/auth/currentUser')).data;
-      const currentUser = {id : 1}
+      const currentUser = { id: 1 };
       const res = await axios.post('http://localhost:3000/api/user/video', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -78,7 +107,7 @@ const VideoRecorder = () => {
         headers: {
           'Content-Type': 'application/json'
         }
-      }, (err,{res}) => {
+      }, (err, { res }) => {
         if (err) console.log(err)
         console.log(res);
       })
@@ -88,25 +117,30 @@ const VideoRecorder = () => {
   }
 
   return (
-    <div>
-      <video ref={videoRef} autoPlay />
-      <button onClick={handleStartRecording}>Start Recording</button>
-      <button onClick={handleStopRecording}>Stop Recording</button>
+    <div className={classes.root}>
+      <div>
+        <video ref={videoRef} autoPlay className={classes.video} />
+      </div>
+      <div className={classes.buttonContainer}>
+      <Button variant="contained" color="primary" className={classes.roundedButton} onClick={handleStartRecording}>
+  Start Recording
+</Button>
+<Button variant="contained" color="secondary" className={classes.roundedButton} onClick={handleStopRecording}>
+  Stop Recording
+</Button>
+      </div>
       {recordedVideoUrl && (
         <div>
-          <h2>Recorded Video</h2>
-          <video src={recordedVideoUrl} controls />
-          <button onClick={saveVideoAsFile}>Save</button>
-          <button onClick={login}>login</button>
-          {/*<button onClick={}>Cancel</button>*/}
+          <Typography variant="h6">Recorded Video</Typography>
+          <video src={recordedVideoUrl} controls className={classes.video} />
+          <div className={classes.buttonContainer}>
+          <Button variant="contained" color="primary" className={classes.roundedButton} onClick={saveVideoAsFile}>
+  Save
+</Button>
+
+          </div>
         </div>
       )}
-      {/* {uploadStatus === "success" && (
-          <div>
-            <h1> File uploaded successfully! </h1>
-            <button onClick={setUploadStatus(null)}>Got it</button>
-          </div>  
-      )} */}
     </div>
   );
 };
